@@ -1,13 +1,12 @@
-const userName: string = process.env.USERNAME!;
-const password: string = process.env.PASSWORD!;
+const userName: string = process.env.DBUSERNAME!;
+const password: string = process.env.DBPASSWORD!;
 const dbUri: string = process.env.DBURI!;
 
 import {MongoClient, ServerApiVersion} from 'mongodb'
 
-let getMongoClient = async function(): Promise<MongoClient> {
+export let getMongoClient = async function(): Promise<MongoClient> {
     try{
-        const uri = `mongodb+srv://${userName}:${password}@${dbUri}/?retryWrites=true&w=majority`;
-        console.log('before connect');
+        const uri = `mongodb+srv://${userName}:${password}@${dbUri}/Quotes?retryWrites=true&w=majority`;
         const client = await MongoClient.connect(uri, {serverApi: ServerApiVersion.v1});
         return client;
     } catch {
@@ -15,5 +14,3 @@ let getMongoClient = async function(): Promise<MongoClient> {
         throw('An error occured');
     }
 }
-
-export {getMongoClient};

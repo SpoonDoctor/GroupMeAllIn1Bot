@@ -26,11 +26,8 @@ class QuotebotController extends BotController {
     // Since we can't do async in a constructor...
     private async finishSetup(){
         if(!this.quotes){
-            console.log('1');
             let mongoDbClient = await getMongoClient();
-            console.log('2');
             this.quoteCollection = mongoDbClient.db('Quotes').collection('quote');
-            console.log('3');
             this.quotes = await this.quoteCollection.find({}).toArray() as Quote[];
         }
     }
@@ -232,7 +229,6 @@ class QuotebotController extends BotController {
     }
 
     private findBestQuote(messageText: string, quoteTarget: string): string {
-        console.log(this.quotes);
         // Quote target might be more than one word, so anything after the command should be included
         if (messageText && quoteTarget === '') {
             quoteTarget = messageText;
@@ -293,7 +289,6 @@ class QuotebotController extends BotController {
                 quoteTarget = 'drevv';
             // Fall-through
             case '/QUOTE':
-                console.log('hello')
                 // Find random quote of specified quote target
                 return this.findBestQuote(messageText, quoteTarget)
             case '/QWOTE': //Time for something a little weird and fun....
@@ -328,7 +323,7 @@ class QuotebotController extends BotController {
                     quoteText = messageText.substring(quoteIndex + 1, messageText.length - 1);
 
                 } else {
-                    quoteTarget = messageText.split(' ')[1]!;
+                    quoteTarget = messageText.split(' ')[0]!;
                     quoteText = messageText.substring(quoteTarget.length + 1);
                 }
                 await this.quoteCollection.insertOne({

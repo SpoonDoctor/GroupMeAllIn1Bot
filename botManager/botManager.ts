@@ -17,6 +17,9 @@ class BotManager{
     }
 
     public async handleMessage(groupmeMessage: GroupmeMessage): Promise<void>{
+        if(groupmeMessage.sender_type !== 'user'){
+            return;
+        }
         let sanitizedText = groupmeMessage.text.trim().replace(/“/g, '"').replace(/”/g, '"').replace(/‘/g, "'").replace(/’/, "'");
         let groupmeRequests: GroupmeRequest[] = [];
         for(const bot of this.bots){
