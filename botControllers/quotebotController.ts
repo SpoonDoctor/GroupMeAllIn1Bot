@@ -1,15 +1,9 @@
 import { BotController } from './BotController.js';
-import { getMongoClient } from '../connectors/mongoConnector.js';
-import { WithId, Document, Collection } from 'mongodb'
-
-interface Quote extends WithId<Document> {
-    user: string;
-    quote: string;
-}
+import { startMongoClient, Quote, IQuote } from '../connectors/mongoConnector.js';
 
 class QuotebotController extends BotController {
-    private quotes: Quote[];
-    private quoteCollection: Collection<Document>;
+    private quotes: IQuote[];
+    private isMongoConnected: boolean = false;
     protected groupmeBotID: string;
     public commandRegex: RegExp[] = [
         /^\/q[uw]o[m]{0,1}te(stats){0,1}/gmi,
@@ -25,13 +19,10 @@ class QuotebotController extends BotController {
 
     // Since we can't do async in a constructor...
     private async finishSetup(){
-        if(!this.quotes){
-            console.log('1');
-            let mongoDbClient = await getMongoClient();
-            console.log('2');
-            this.quoteCollection = mongoDbClient.db('Quotes').collection('quote');
-            console.log('3');
-            this.quotes = await this.quoteCollection.find({}).toArray() as Quote[];
+        if(!this.isMongoConnected){
+            startMongoClient();
+            this.quotes = await Quote.find({});
+            this.isMongoConnected = true;
         }
     }
 
@@ -244,8 +235,8 @@ class QuotebotController extends BotController {
             return this.quotes[chosenQuote]!.quote;
         }
 
-        let targetMatches: Quote[] = [];
-        let targetSubStringOf: Quote[] = [];
+        let targetMatches: IQuote[] = [];
+        let targetSubStringOf: IQuote[] = [];
         this.quotes.forEach((quote) => {
             7
             if (quoteTarget.charAt(0) === "!" && (quote.user.toUpperCase() !== quoteTarget.toUpperCase())) {
@@ -266,7 +257,7 @@ class QuotebotController extends BotController {
             let chosenQuote: number = this.getRandomInt(numQuotes);
             return targetSubStringOf[chosenQuote]!.quote;
         } else {
-            let bestQuotes: Quote[] = [];
+            let bestQuotes: IQuote[] = [];
             let bestSimilarity: number = 0;
             this.quotes.forEach((quote) => {
                 let curSim = this.stringSimilarity(quote.user, quoteTarget)
@@ -331,12 +322,12 @@ class QuotebotController extends BotController {
                     quoteTarget = messageText.split(' ')[1]!;
                     quoteText = messageText.substring(quoteTarget.length + 1);
                 }
-                await this.quoteCollection.insertOne({
+                await Quote.create({
                     user: quoteTarget.toUpperCase(),
                     quote: ('"' + quoteText + '" ~' + quoteTarget)
                 });
                 // Refresh cached quotes
-                this.quotes = await this.quoteCollection.find({}).toArray() as Quote[];
+                this.quotes = await Quote.find({});
                 return 'Saved new quote.';
             default:
                 return '';

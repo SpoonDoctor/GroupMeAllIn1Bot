@@ -1,19 +1,33 @@
-const userName: string = process.env.USERNAME!;
-const password: string = process.env.PASSWORD!;
+const userName: string = process.env.DBUSERNAME!;
+const password: string = process.env.DBPASSWORD!;
 const dbUri: string = process.env.DBURI!;
 
-import {MongoClient, ServerApiVersion} from 'mongodb'
+import {connect, model, Schema} from 'mongoose';
 
-let getMongoClient = async function(): Promise<MongoClient> {
+export interface IQuote {
+    user: string;
+    quote: string;
+}
+
+const QuoteSchema = new Schema<IQuote>({
+    user: {
+        type: String
+    },
+    quote: {
+        type: String
+    }
+});
+
+export const Quote = model<IQuote>('Quote', QuoteSchema);
+
+export let startMongoClient = async function(): Promise<void> {
     try{
-        const uri = `mongodb+srv://${userName}:${password}@${dbUri}/?retryWrites=true&w=majority`;
-        console.log('before connect');
-        const client = await MongoClient.connect(uri, {serverApi: ServerApiVersion.v1});
-        return client;
+        const uri = `mongodb+srv://${userName}:${password}@${dbUri}/quotes`;
+        console.log('connecting to ', uri);
+        await connect(uri);
+        console.log('done connecting');
     } catch {
         console.log('An error occured connecting to mongodb')
         throw('An error occured');
     }
 }
-
-export {getMongoClient};
