@@ -2,7 +2,7 @@ import { BotController } from "../botControllers/BotController.js";
 import { GroupmeRequest, GroupmeMessage, sendGroupmeRequest } from "../connectors/groupmeConnector.js";
 import quotebotController from "../botControllers/quotebotController.js";
 
-
+// TODO: Add a way to disable/enable bots with flags
 class BotManager{
     private bots: BotController[] = [];
 

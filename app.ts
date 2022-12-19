@@ -9,4 +9,4 @@ app.post('/', async (req, res)=> {
     await botManager.handleMessage(req.body);
     res.status(200).send();
 });
-module.exports.server = sls(app)
+export const server = sls(app)

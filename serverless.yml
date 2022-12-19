@@ -25,7 +25,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs14.x
 
 # you can overwrite defaults here
 #  stage: dev
@@ -53,6 +53,7 @@ provider:
     DBPASSWORD: ${self:custom.secrets.DBPASSWORD}
     DBUSERNAME: ${self:custom.secrets.DBUSERNAME}
     DBURI: ${self:custom.secrets.DBURI}
+    QUOTEBOTID: ${self:custom.secrets.QUOTEBOTID}
 
 # you can add packaging information here
 #package:

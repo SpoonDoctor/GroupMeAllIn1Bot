@@ -13,7 +13,8 @@ class QuotebotController extends BotController {
     protected groupmeBotID: string;
     public commandRegex: RegExp[] = [
         /^\/q[uw]o[m]{0,1}te(stats){0,1}/gmi,
-        /^\/addquote/gmi
+        /^\/addquote/gmi,
+        /^\/drevv/gmi
     ]
 
 
