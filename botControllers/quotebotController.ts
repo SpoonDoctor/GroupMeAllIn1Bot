@@ -244,8 +244,8 @@ class QuotebotController extends BotController {
         let targetMatches: Quote[] = [];
         let targetSubStringOf: Quote[] = [];
         this.quotes.forEach((quote) => {
-            7
-            if (quoteTarget.charAt(0) === "!" && (quote.user.toUpperCase() !== quoteTarget.toUpperCase())) {
+            if (quoteTarget.charAt(0) === "!" && (quote.user.toUpperCase() !== quoteTarget.substring(1).toUpperCase())) {
+                console.log(quote.user);
                 targetMatches.push(quote);
             } else if (quote.user.toUpperCase() === quoteTarget.toUpperCase()) {
                 targetMatches.push(quote);
@@ -332,6 +332,7 @@ class QuotebotController extends BotController {
                     quote: ('"' + quoteText + '" ~' + quoteTarget)
                 });
                 // Refresh cached quotes
+                // TODO: Probably also refresh on a timer
                 this.quotes = await this.quoteCollection.find({}).toArray() as Quote[];
                 return 'Saved new quote.';
             default:
